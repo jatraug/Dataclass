@@ -7,8 +7,11 @@ import numpy as np
 # Load up the dataset, setting correct header labels.
 #
 # .. your code here ..
-
-
+df = pd.read_csv('Datasets/census.data', sep=',', names=['education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex', 'classification'])
+##['motor', 'screw', 'pgain', 'vgain', 'class'])
+print(df)
+print (df.describe())
+print(df.dtypes)
 
 #
 # TODO:
