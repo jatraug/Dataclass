@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 import assignment2_helper as helper
+import numpy as np
 
 # Look pretty...
 # matplotlib.style.use('ggplot')
@@ -20,8 +21,12 @@ scaleFeatures = False
 # feature?
 #
 # .. your code here ..
-
-
+df = pd.read_csv('Datasets/kidney_disease.csv' )
+#,dtype={'wc':np.float64,'rc':np.float64}, engine='c'
+##names=['id','age','bp','sg','al','su','rbc','pc','pcc','ba','bgr','bu','sc','sod','pot','hemo','pcv','wc','rc','htn','dm','cad','appet','pe','ane','classification']
+#print(df.head())
+#print('describe')
+#print(df.describe())
 
 # Create some color coded labels; the actual label feature
 # will be removed prior to executing PCA, since it's unsupervised.
@@ -33,8 +38,36 @@ labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 #       ['bgr','wc','rc']
 #
 # .. your code here ..
+# bgr = df.loc[:,'bgr']
+# print('bgr only')
+# #print(bgr)
+# wc = df.loc[:,'wc']
+# print('wc')
+# print(wc)
+# rc = df.loc[:,'rc']
+# print('rc')
+# print(rc)
+# frames = [bgr, wc, rc]
+# df3 = pd.concat(frames)
+df3 = df.loc[:,['bgr','wc','rc']]
+df2 = df3.fillna(method='pad')
+print('Here')
+print(df2.loc[:,'wc'])
+df2=df2.convert_objects(convert_numeric='force')
 
 
+
+#df2 = df3.notnull()
+print('whole')
+print(df2)
+print('describe')
+print(df2.describe())
+print('corr')
+print(df2.corr())
+print('dtypes')
+print(df2.dtypes)
+print('var')
+print(df2.var())
 
 # TODO: Print out and check your dataframe's dtypes. You'll might
 # want to set a breakpoint after you print it out so you can stop the
@@ -50,7 +83,7 @@ labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 # .. your code here ..
 
 
-
+#Stoophere
 # TODO: PCA Operates based on variance. The variable with the greatest
 # variance will dominate. Go ahead and peek into your data using a
 # command that will check the variance of every feature in your dataset.
@@ -69,7 +102,7 @@ labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 # just yet though!
 #
 # .. your code adjustment here ..
-if scaleFeatures: df = helper.scaleFeatures(df)
+if scaleFeatures: df2 = helper.scaleFeatures(df2)
 
 
 
@@ -79,7 +112,13 @@ if scaleFeatures: df = helper.scaleFeatures(df)
 #
 # .. your code here ..
 
+from sklearn.decomposition import PCA
+pca = PCA(n_components=2, svd_solver='full')
 
+pca.fit(df2)
+PCA(copy=True, n_components=2, whiten=False)
+
+T = pca.transform(df2)
 # Plot the transformed data as a scatter plot. Recall that transforming
 # the data will result in a NumPy NDArray. You can either use MatPlotLib
 # to graph it directly, or you can convert it to DataFrame and have pandas
