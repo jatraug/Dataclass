@@ -25,6 +25,12 @@ armadillo = pd.DataFrame({
   'z':plyfile['vertex']['y'][::reduce_factor]
 })
 
+armadillo2 = pd.DataFrame({
+  'x':plyfile['vertex']['z'][::reduce_factor],
+  'y':plyfile['vertex']['x'][::reduce_factor],
+  'z':plyfile['vertex']['y'][::reduce_factor]
+})
+
 
 def do_PCA(armadillo):
   #
@@ -40,10 +46,26 @@ def do_PCA(armadillo):
   #
   # .. your code here ..
 
-  return None
+  from sklearn.decomposition import PCA
+  pca = PCA(n_components=2, svd_solver='full')
+
+  pca.fit(armadillo)
+  PCA(copy=True, n_components=2, whiten=False)
+
+  T = pca.transform(armadillo)
+
+#  df.shape
+#  (430, 6)
+
+ # T.shape
+ # (430, 2)
 
 
-def do_RandomizedPCA(armadillo):
+
+  return T
+
+
+def do_RandomizedPCA(armadillo2):
   #
   # TODO: Write code to import the libraries required for
   # RandomizedPCA. Then, train your RandomizedPCA on the armadillo
@@ -63,8 +85,24 @@ def do_RandomizedPCA(armadillo):
   # http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
   #
   # .. your code here ..
+  from sklearn.decomposition import PCA
+  pca = PCA(n_components=2, svd_solver='randomized')
 
-  return None
+  pca.fit(armadillo2, y=None)
+  PCA(copy=True, n_components=2, whiten=False)
+
+  T2 = pca.transform(armadillo2)
+
+# #  df.shape
+# #  (430, 6)
+
+#  # T.shape
+#  # (430, 2)
+
+
+
+  return T2
+
 
 
 
@@ -97,7 +135,7 @@ if not pca is None:
 
 # Time the execution of rPCA 5000x
 t1 = datetime.datetime.now()
-for i in range(5000): rpca = do_RandomizedPCA(armadillo)
+for i in range(5000): rpca = do_RandomizedPCA(armadillo2)
 time_delta = datetime.datetime.now() - t1
 
 # Render the newly transformed RandomizedPCA armadillo!
