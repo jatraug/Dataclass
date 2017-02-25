@@ -10,7 +10,8 @@ plt.style.use('ggplot')
 
 
 # Do * NOT * alter this line, until instructed!
-scaleFeatures = False
+scaleFeatures = True
+ ##False
 
 
 # TODO: Load up the dataset and remove any and all
@@ -58,6 +59,8 @@ df2=df2.convert_objects(convert_numeric='force')
 
 
 #df2 = df3.notnull()
+df2 = df2.fillna(method='pad')
+###df2 = df2.drop(df2.iloc[0,:])
 print('whole')
 print(df2)
 print('describe')
@@ -129,7 +132,7 @@ T = pca.transform(df2)
 #
 # Since we transformed via PCA, we no longer have column names. We know we
 # are in P.C. space, so we'll just define the coordinates accordingly:
-ax = helper.drawVectors(T, pca.components_, df.columns.values, plt, scaleFeatures)
+ax = helper.drawVectors(T, pca.components_, df.columns.values, plt, False) ##scaleFeatures)
 T = pd.DataFrame(T)
 T.columns = ['component1', 'component2']
 T.plot.scatter(x='component1', y='component2', marker='o', c=labels, alpha=0.75, ax=ax)
