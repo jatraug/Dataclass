@@ -6,6 +6,7 @@ import numpy as np
 
 # Look pretty...
 # matplotlib.style.use('ggplot')
+
 plt.style.use('ggplot')
 
 
@@ -57,7 +58,7 @@ print('Here')
 print(df2.loc[:,'wc'])
 df2=df2.convert_objects(convert_numeric='force')
 
-df2 = df2.get_dummies(columns=[ 'rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane'])
+df2 = pd.get_dummies(df2,columns=[ 'rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane'])
 
 #df2 = df3.notnull()
 df2 = df2.fillna(0) ##df2.mean(axis=1)) 
