@@ -52,21 +52,45 @@ for i in range(num_images):
 # y is the principal component you want displayed on the y-axis, Can be 1 or 2
 #
 # .. your code here ..
+from sklearn.decomposition import PCA
+pca = PCA(n_components=3, svd_solver='full')
 
+pca.fit(df)
+PCA(copy=True, n_components=3, whiten=False)
 
+T = pca.transform(df)
+# Plot2D(T, title, x, y, num_to_plot=40)
+Plot2D(T, title="hoohoo", x=0,y=0, num_to_plot=40)
 #
 # TODO: Implement Isomap here. Reduce the dataframe df down
 # to THREE components. Once you've done that, call Plot2D using
 # the first two components.
-#
+#21
 # .. your code here ..
-
-
+from sklearn import manifold
+iso = manifold.Isomap(n_neighbors=8, n_components=3, neighbors_algorithm='auto', path_method='auto', tol=0)\
+      .fit_transform(df)
+print(iso.shape)
+#iso.fit(df)
+#I=manifold.Isomap(eigen_solver='auto', max_iter=None, n_components=2, n_neighbors=4,
+#  neighbors_algorithm='auto', path_method='auto', tol=0)
+#print(I)
+#T=manifold.Isomap.transform(I)
+Plot2D(iso[:,1:3], title="hoohooTwo", x=0,y=0, num_to_plot=40)
 #
 # TODO: If you're up for a challenge, draw your dataframes in 3D
 # Even if you're not, just do it anyway.
 #
 # .. your code here ..
 
+fig = plt.figure()
+ax = Axes3D(fig)
+ax.scatter(iso[:,0], iso[:,1], iso[:,2], c='red')
+ax.set_xlabel('area')
+ax.set_ylabel('perimeter')
+ax.set_zlabel('asymmetry')
 
+fig = plt.figure()
+ax2 = Axes3D(fig)
+ax2.scatter(T[:,0], T[:,1], T[:,2], c='green')
 plt.show()
