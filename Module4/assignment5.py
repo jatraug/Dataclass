@@ -16,12 +16,7 @@ plt.style.use('ggplot')
 #
 # .. your code here .. 
 samples = []
-path = 'Datasets/ALOI/32'
-files = os.listdir(path)
-for i in range(len(files)):
-  print(files[i])
-  samples.append(misc.imread(path + '/' + files[i]))
-print(len(samples))
+
 #
 # TODO: Write a for-loop that iterates over the images in the
 # Module4/Datasets/ALOI/32/ folder, appending each of them to
@@ -37,20 +32,17 @@ print(len(samples))
 # .. your code here .. 
 
 ##from scipy import misc
-##########
-# Load the image up
-#img = misc.imread('image.png')
+path = 'Datasets/ALOI/32'
+files = os.listdir(path)
+for i in range(len(files)):
+  print(files[i])
+  img = misc.imread(path + '/' + files[i])
+  samples.append([img[0]])
+print('img')
+print(img)
+print(len(samples))
+print(samples)
 
-# Is the image too big? Resample it down by an order of magnitude
-#img = img[::2, ::2]
-
-# Scale colors from (0-255) to (0-1), then reshape to 1D array per pixel, e.g. grayscale
-
-# If you had color images and wanted to preserve all color channels, use .reshape(-1,3)
-
-##X = (img / 255.0).reshape(-1)
-
-##########
 #
 #
 # TODO: Once you're done answering the first three questions,
@@ -60,21 +52,26 @@ print(len(samples))
 # assignment and answer the final question below.
 #
 # .. your code here .. 
-
+#print(samples.dtypes())
 
 #
 # TODO: Convert the list to a dataframe
 #
 # .. your code here .. 
 
-
-
+df = pd.DataFrame.from_records(samples)
+print(df.describe())
+print('df')
+print(df)
 #
 # TODO: Implement Isomap here. Reduce the dataframe df down
 # to three components, using K=6 for your neighborhood size
 #
 # .. your code here .. 
-
+from sklearn import manifold
+iso = manifold.Isomap(n_neighbors=6, n_components=3, neighbors_algorithm='auto', path_method='auto', tol=0)\
+      .fit_transform(df.loc[0]) ##.loc[1,:]
+print(iso.shape)
 
 
 #
