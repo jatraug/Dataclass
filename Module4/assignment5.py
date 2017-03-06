@@ -5,10 +5,12 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib
 import matplotlib.pyplot as plt
 import os
+import numpy as np
 # Look pretty...
 # matplotlib.style.use('ggplot')
 plt.style.use('ggplot')
 
+colors = []
 
 #
 # TODO: Start by creating a regular old, plain, "vanilla"
@@ -37,11 +39,29 @@ files = os.listdir(path)
 for i in range(len(files)):
   print(files[i])
   img = misc.imread(path + '/' + files[i])
-  samples.append([img[0]])
+
+  #  img = img.reshape(-1)
+  samples.append(  (img[::2, ::2] / 255.0).reshape(-1)  )
+  #  samples.append([img[0]])
+  colors.append('b')
+
+path = 'Datasets/ALOI/32i'
+files = os.listdir(path)
+for i in range(len(files)):
+  print(files[i])
+  img = misc.imread(path + '/' + files[i])
+
+  #  img = img.reshape(-1)
+  samples.append(  (img[::2, ::2] / 255.0).reshape(-1)  )
+  colors.append('r')
 print('img')
 print(img)
 print(len(samples))
-print(samples)
+#ar = np.array[img]
+#img = img.[:,0:145]
+print('img.shape')
+print(img.shape)
+#print(samples)
 
 #
 #
@@ -52,6 +72,9 @@ print(samples)
 # assignment and answer the final question below.
 #
 # .. your code here .. 
+#samples = map(float, samples)
+##s2 = [float(i) for i in samples]
+#samples = np.array(samples) + 0.
 #print(samples.dtypes())
 
 #
@@ -59,18 +82,27 @@ print(samples)
 #
 # .. your code here .. 
 
-df = pd.DataFrame.from_records(samples)
+df = pd.DataFrame(samples)
 print(df.describe())
 print('df')
 print(df)
+print('shape')
+print(df.loc[0].shape)
 #
 # TODO: Implement Isomap here. Reduce the dataframe df down
 # to three components, using K=6 for your neighborhood size
 #
 # .. your code here .. 
+#df=df.convert_objects(convert_numeric='force')
+#df = df.fillna(0)
+
+#ar= np.array(df.loc[0]) ##,dtype=dtype, order=order, copy=copy)
+#stohere
+print ('df.loc[0]')
+print (df.loc[0])
 from sklearn import manifold
-iso = manifold.Isomap(n_neighbors=6, n_components=3, neighbors_algorithm='auto', path_method='auto', tol=0)\
-      .fit_transform(df.loc[0]) ##.loc[1,:]
+tmp = manifold.Isomap(n_neighbors=6, n_components=3, neighbors_algorithm='auto', path_method='auto', tol=0)
+iso = tmp.fit_transform(df) ##.loc[1,:]
 print(iso.shape)
 
 
@@ -81,7 +113,8 @@ print(iso.shape)
 #
 # .. your code here .. 
 
-
+#iso.plot.scatter(x='component1', y='component2', marker='o', c=labels, alpha=0.75, ax=ax)
+plt.scatter(iso[:,0], iso[:,1], marker = 'o', c=colors)
 
 
 #
@@ -90,7 +123,12 @@ print(iso.shape)
 #
 # .. your code here .. 
 
-
+fig = plt.figure()
+ax = Axes3D(fig)
+ax.scatter(iso[:,0], iso[:,1], iso[:,2], c=colors)
+ax.set_xlabel('area')
+ax.set_ylabel('perimeter')
+ax.set_zlabel('asymmetry')
 
 plt.show()
 
