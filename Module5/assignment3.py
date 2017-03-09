@@ -2,7 +2,7 @@ import pandas as pd
 from datetime import timedelta
 import matplotlib.pyplot as plt
 import matplotlib
-
+import numpy as np
 matplotlib.style.use('ggplot') # Look Pretty
 
 #
@@ -37,6 +37,9 @@ def clusterWithFewestSamples(model):
 
 
 def doKMeans(data, clusters=0):
+  import sklearn
+  from sklearn.cluster import KMeans
+
   #
   # TODO: Be sure to only feed in Lat and Lon coordinates to the KMeans algo, since none of the other
   # data is suitable for your purposes. Since both Lat and Lon are (approximately) on the same scale,
@@ -48,6 +51,10 @@ def doKMeans(data, clusters=0):
   # here, which will be a SKLearn K-Means model for this to work.
   #
   # .. your code here ..
+  data = [data['TowerLon'], data['TowerLat']]
+  data = np.array(data)
+  data = np.transpose(data)
+  model = KMeans(n_clusters=clusters, random_state=0).fit(data)
   return model
 
 
@@ -58,7 +65,15 @@ def doKMeans(data, clusters=0):
 #
 # .. your code here ..
 
+df = pd.read_csv('Datasets/CDR.csv' )
+#print (df.head())
+#print df.describe()
+#print df.dtypes
 
+df['CallDate'] = pd.to_datetime(df.loc[:, 'CallDate'])
+df['CallTime'] = pd.to_timedelta(df.loc[:, 'CallTime'])
+
+#print df.dtypes#
 
 
 
@@ -68,9 +83,15 @@ def doKMeans(data, clusters=0):
 # Manually check through unique_numbers to ensure the order the numbers appear is
 # the same order they appear (uniquely) in your dataset:
 #
+
+
+
+
 # .. your code here ..
 
-
+uninums = df['In'].unique()
+print uninums
+#stophere
 #
 # INFO: The locations map above should be too "busy" to really wrap your head around. This
 # is where domain expertise comes into play. Your intuition tells you that people are likely
@@ -96,14 +117,14 @@ print "\n\nExamining person: ", 0
 # "In" feature (user phone number) is equal to the first number on your unique list above
 #
 # .. your code here ..
-
+user1 = df[df['In'] == df.loc[0,'In']]
 
 #
 # TODO: Alter your slice so that it includes only Weekday (Mon-Fri) values.
 #
 # .. your code here ..
-
-
+user1 =  user1[user1.DOW == ('Mon'or 'Tue' or 'Wed' or 'Thu' or 'Fri')]
+print user1
 #
 # TODO: The idea is that the call was placed before 5pm. From Midnight-730a, the user is
 # probably sleeping and won't call / wake up to take a call. There should be a brief time
@@ -111,13 +132,17 @@ print "\n\nExamining person: ", 0
 # So the assumption is that most of the time is spent either at work, or in 2nd, at home.
 #
 # .. your code here ..
-
-
+u1 =  user1[user1.CallTime > '05:30:00']
+u2 =  user1[user1.CallTime < '17:00:00']
+user1 = pd.concat([u1, u2])
 #
 # TODO: Plot the Cell Towers the user connected to
 #
 # .. your code here ..
-
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.scatter(user1.TowerLon,user1.TowerLat, c='g', marker='o', alpha=0.2)
+ax.set_title('Weekeday Calls (> 5:30 to 17:00)')
 
 
 #
@@ -127,8 +152,11 @@ print "\n\nExamining person: ", 0
 # sweep up the annoying outliers and not-home, not-work travel occasions. the other two will zero in
 # on the user's approximate home location and work locations. Or rather the location of the cell
 # tower closest to them.....
-model = doKMeans(user1, 3)
-
+model = doKMeans(user1, 4)
+centroids = model.cluster_centers_
+ax.scatter(centroids[:,0], centroids[:,1], marker='x', c='red', alpha=0.5, linewidths=3, s=169)
+clusterInfo(model)
+showandtell()
 
 #
 # INFO: Print out the mean CallTime value for the samples belonging to the cluster with the LEAST
