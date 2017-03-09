@@ -2,6 +2,9 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 import matplotlib
+import numpy as np
+import sklearn
+from sklearn.cluster import KMeans
 
 matplotlib.style.use('ggplot') # Look Pretty
 
@@ -11,7 +14,7 @@ def showandtell(title=None):
   # exit()
 
 
-
+#32.731611, -96.709417
 
 #
 # INFO: This dataset has call records for 10 users tracked over the course of 3 years.
@@ -23,9 +26,15 @@ def showandtell(title=None):
 # Convert the date using pd.to_datetime, and the time using pd.to_timedelta
 #
 # .. your code here ..
+df = pd.read_csv('Datasets/CDR.csv' )
+print (df.head())
+print df.describe()
+print df.dtypes
 
+df['CallDate'] = pd.to_datetime(df.loc[:, 'CallDate'])
+df['CallTime'] = pd.to_timedelta(df.loc[:, 'CallTime'])
 
-#
+print df.dtypes#
 # TODO: Get a distinct list of "In" phone numbers (users) and store the values in a
 # regular python list.
 # Hint: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.tolist.html
@@ -39,11 +48,13 @@ def showandtell(title=None):
 # that is, the very first number in the dataset
 #
 # .. your code here ..
-
+user1 = df[df['In'] == df.loc[0,'In']]
+print 'user1'
+print user1.head()
 
 # INFO: Plot all the call locations
 user1.plot.scatter(x='TowerLon', y='TowerLat', c='gray', alpha=0.1, title='Call Locations')
-showandtell()  # Comment this line out when you're ready to proceed
+#showandtell()  # Comment this line out when you're ready to proceed
 
 
 #
@@ -69,8 +80,9 @@ showandtell()  # Comment this line out when you're ready to proceed
 # only examining records that came in on weekends (sat/sun).
 #
 # .. your code here ..
-
-
+user1 =  user1[user1.DOW == ('Sat' or 'Sun')]
+print'user1 on weekend'
+print user1.head()
 #
 # TODO: Further filter it down for calls that are came in either before 6AM OR after 10pm (22:00:00).
 # You can use < and > to compare the string times, just make sure you code them as military time
@@ -80,8 +92,12 @@ showandtell()  # Comment this line out when you're ready to proceed
 # slice, print out its length:
 #
 # .. your code here ..
-
-
+u1 =  user1[user1.CallTime > '22:00:00'] 
+u2 =  user1[user1.CallTime < '06:00:00']
+user1 = pd.concat([u1, u2])
+#user1 =  user1[user1.CallTime < pd.to_timedelta('06:00:00')]
+print 'user1.count'
+print user1.count
 #
 # INFO: Visualize the dataframe with a scatter plot as a sanity check. Since you're familiar
 # with maps, you know well that your X-Coordinate should be Longitude, and your Y coordinate
