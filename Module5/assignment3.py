@@ -35,6 +35,15 @@ def clusterWithFewestSamples(model):
   print "\n  Cluster With Fewest Samples: ", minCluster
   return (model.labels_==minCluster)
 
+def clusterWithMostSamples(model):   
+ maxCluster = 0   
+ maxSamples = (model.labels_==0).sum()  
+ for i in range(len(model.cluster_centers_)):
+     if maxSamples < (model.labels_==i).sum():
+       maxCluster = i
+       maxSamples = (model.labels_==i).sum()   
+ print "\n  Cluster With Most Samples: ", maxCluster   
+ return (model.labels_==maxCluster)
 
 def doKMeans(data, clusters=0):
   import sklearn
@@ -117,7 +126,13 @@ print "\n\nExamining person: ", 0
 # "In" feature (user phone number) is equal to the first number on your unique list above
 #
 # .. your code here ..
+#3688089071  96.87, 32.81] 
+# 1559410755] 96.93, 32.69 
+#2894365987] 96,89, 32.72 XXX
+#2068627935 96.83, 32.72
+#4638472273 96.909, 32.900
 user1 = df[df['In'] == df.loc[0,'In']]
+
 
 #
 # TODO: Alter your slice so that it includes only Weekday (Mon-Fri) values.
@@ -125,6 +140,9 @@ user1 = df[df['In'] == df.loc[0,'In']]
 # .. your code here ..
 user1 =  user1[user1.DOW == ('Mon'or 'Tue' or 'Wed' or 'Thu' or 'Fri')]
 print user1
+print 'TowerLat == 32.90020978'
+###print user1[user1['TowerLat' == df.loc[0,'In']]] # == 32.90020978]
+#df[df['In'] == df.loc[0,'In']]
 #
 # TODO: The idea is that the call was placed before 5pm. From Midnight-730a, the user is
 # probably sleeping and won't call / wake up to take a call. There should be a brief time
@@ -144,7 +162,9 @@ ax = fig.add_subplot(111)
 ax.scatter(user1.TowerLon,user1.TowerLat, c='g', marker='o', alpha=0.2)
 ax.set_title('Weekeday Calls (> 5:30 to 17:00)')
 
-
+usertst = df[df.In == 3688089071] # 1559410755]  #2894365987]
+print '&&&&&&&usertst[TowerLat]'
+print usertst['TowerLat'].unique()
 #
 # INFO: Run K-Means with K=3 or K=4. There really should only be a two areas of concentration. If you
 # notice multiple areas that are "hot" (multiple areas the usr spends a lot of time at that are FAR
@@ -152,12 +172,12 @@ ax.set_title('Weekeday Calls (> 5:30 to 17:00)')
 # sweep up the annoying outliers and not-home, not-work travel occasions. the other two will zero in
 # on the user's approximate home location and work locations. Or rather the location of the cell
 # tower closest to them.....
-model = doKMeans(user1, 4)
+model = doKMeans(user1, 3)
 centroids = model.cluster_centers_
 ax.scatter(centroids[:,0], centroids[:,1], marker='x', c='red', alpha=0.5, linewidths=3, s=169)
 clusterInfo(model)
 showandtell()
-
+clusterWithMostSamples(model)
 #
 # INFO: Print out the mean CallTime value for the samples belonging to the cluster with the LEAST
 # samples attached to it. If our logic is correct, the cluster with the MOST samples will be work.
@@ -167,7 +187,7 @@ showandtell()
 midWayClusterIndices = clusterWithFewestSamples(model)
 midWaySamples = user1[midWayClusterIndices]
 print "    Its Waypoint Time: ", midWaySamples.CallTime.mean()
-
+print midWaySamples.CallTime
 
 #
 # Let's visualize the results!
@@ -175,4 +195,8 @@ print "    Its Waypoint Time: ", midWaySamples.CallTime.mean()
 ax.scatter(model.cluster_centers_[:,1], model.cluster_centers_[:,0], s=169, c='r', marker='x', alpha=0.8, linewidths=2)
 #
 # Then save the results:
-showandtell('Weekday Calls Centroids')  # Comment this line out when you're ready to proceed
+#showandtell('Weekday Calls Centroids')  # Comment this line out when you're ready to proceed
+
+
+## -96.90930273, 32.90020978 most samples
+## -96.70959385, 32.7339405 2ns
