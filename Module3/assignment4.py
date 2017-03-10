@@ -14,7 +14,8 @@ plt.style.use('ggplot')
 # It's located at 'Datasets/wheat.data'
 # 
 # .. your code here ..
-
+df = pd.read_csv('Datasets/wheat.data', sep=',')
+print(df.head())
 
 
 #
@@ -23,8 +24,11 @@ plt.style.use('ggplot')
 # Also get rid of the 'area' and 'perimeter' features
 # 
 # .. your code here ..
+df = df.drop('id', 1)
+df = df.drop('area', 1)
+df = df.drop('perimeter', 1)
 
-
+print(df.head())
 
 #
 # TODO: Plot a parallel coordinates chart grouped by
@@ -32,6 +36,11 @@ plt.style.use('ggplot')
 # display parameter alpha to 0.4
 # 
 # .. your code here ..
+#df['target_names'] = list(df) ##['compactness', 'length', 'width', 'asymmetry', 'groove', 'wheat_type']
+plt.figure()
+print(list(df))
+#df['target_names'] =   list(df)
+parallel_coordinates(df, 'wheat_type', alpha=0.4)
 
 
 
